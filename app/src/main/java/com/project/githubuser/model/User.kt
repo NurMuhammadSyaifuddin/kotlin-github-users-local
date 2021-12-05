@@ -8,19 +8,19 @@ import android.os.Parcelable
 @Parcelize
 data class User(
     @SerializedName("avatar")
-    var avatar: String? = null,
+    val avatar: String,
     @SerializedName("company")
-    var company: String? = null,
+    val company: String,
     @SerializedName("follower")
-    var follower: Int? = null,
+    val follower: Int,
     @SerializedName("following")
-    var following: Int? = null,
+    val following: Int,
     @SerializedName("location")
-    var location: String? = null,
+    val location: String,
     @SerializedName("name")
-    var name: String? = null,
+    val name: String,
     @SerializedName("repository")
-    var repository: Int? = null,
+    val repository: Int,
     @SerializedName("username")
-    var username: String? = null
+    val username: String
 ) : Parcelable

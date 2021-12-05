@@ -5,37 +5,38 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.project.githubuser.R
 import com.project.githubuser.databinding.ItemUserBinding
 import com.project.githubuser.model.User
+import com.project.githubuser.utils.UsersDivCallback
+import com.project.githubuser.utils.loadImage
 
-class UsersAdapter: RecyclerView.Adapter<UsersAdapter.ViewHolder>(), Filterable {
+class UsersAdapter : RecyclerView.Adapter<UsersAdapter.ViewHolder>(), Filterable {
 
     private var listener: ((User) -> Unit)? = null
 
     var users = mutableListOf<User>()
-    set(value) {
-        field = value
-        usersFilter = value
-        notifyDataSetChanged()
-    }
+        set(value) {
+            val diffCallback = UsersDivCallback(field, value)
+            val diffResult = DiffUtil.calculateDiff(diffCallback)
+            field.clear()
+            field.addAll(value)
+            usersFilter = value
+            diffResult.dispatchUpdatesTo(this)
+        }
 
     private var usersFilter = mutableListOf<User>()
 
-    inner class ViewHolder (private val context: Context, private val binding: ItemUserBinding): RecyclerView.ViewHolder(binding.root){
+    inner class ViewHolder(private val context: Context, private val binding: ItemUserBinding) :
+        RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(user: User, listener: ((User) -> Unit)?){
+        fun bind(user: User, listener: ((User) -> Unit)?) {
 
             val id = context.resources.getIdentifier(user.avatar, "drawable", context.packageName)
 
-            Glide.with(itemView)
-                .load(id)
-                .placeholder(R.drawable.ic_user)
-                .into(binding.avatarUser)
-
             binding.apply {
+                avatarUser.loadImage(id)
                 tvUsername.text = user.username
                 tvName.text = user.name
             }
@@ -62,13 +63,13 @@ class UsersAdapter: RecyclerView.Adapter<UsersAdapter.ViewHolder>(), Filterable 
 
     override fun getItemCount(): Int = usersFilter.size
 
-    fun onClick(listener: ((User) -> Unit)?){
+    fun onClick(listener: ((User) -> Unit)?) {
         this.listener = listener
     }
 
     override fun getFilter(): Filter = filters
 
-    private val filters = object : Filter(){
+    private val filters = object : Filter() {
         override fun performFiltering(p0: CharSequence?): FilterResults {
             var filteredList = mutableListOf<User>()
             val filterPattern = p0.toString().trim().lowercase()
@@ -85,6 +86,7 @@ class UsersAdapter: RecyclerView.Adapter<UsersAdapter.ViewHolder>(), Filterable 
                     }
                 }
             }
+
             val results = FilterResults()
             results.values = filteredList
 

@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">GithubUser</string>
-    <string name="github_users">Github Users</string>
+    <string name="github_users">GITHUB USERS</string>
     <string name="search">Search</string>
     <string name="close">close</string>
     <string name="default_username">-</string>
@@ -11,4 +11,5 @@
     <string name="back">back</string>
     <string name="splash">splash</string>
     <string name="clear">clear</string>
+    <string name="search_no_data">User Not Found</string>
 </resources>

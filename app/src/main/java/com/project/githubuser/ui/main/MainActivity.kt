@@ -1,5 +1,6 @@
 package com.project.githubuser.ui.main
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
@@ -11,10 +12,7 @@ import com.project.githubuser.adapter.UsersAdapter
 import com.project.githubuser.databinding.ActivityMainBinding
 import com.project.githubuser.repository.Repository
 import com.project.githubuser.ui.detail.DetailActivity
-import com.project.githubuser.utils.gone
-import com.project.githubuser.utils.hideSoftKeybord
-import com.project.githubuser.utils.showSoftKeybord
-import com.project.githubuser.utils.visible
+import com.project.githubuser.utils.*
 import org.jetbrains.anko.startActivity
 
 class MainActivity : AppCompatActivity() {
@@ -67,10 +65,17 @@ class MainActivity : AppCompatActivity() {
         binding.apply {
 
             swipeMain.setOnRefreshListener {
-                showSearch()
-                hideSoftKeybord(this@MainActivity, binding.root)
+
+                if (edtSearchMain.isVisible) {
+                    showSearch()
+                }
+
+                Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+
+                hideSoftKeyboard(this@MainActivity, binding.root)
                 edtSearchMain.text.clear()
                 getDataUsers()
+
             }
 
             userAdapter.onClick { user ->
@@ -81,16 +86,21 @@ class MainActivity : AppCompatActivity() {
 
             imgSearch.setOnClickListener {
                 hideSearch()
-                showSoftKeybord(this@MainActivity, binding.edtSearchMain)
+                showSoftKeyboard(this@MainActivity, binding.edtSearchMain)
             }
 
             imgClear.setOnClickListener {
                 edtSearchMain.text.clear()
             }
 
+            edtSearchMain.addTextChangedListener {
+                val result = edtSearchMain.text
+                imgClear.isVisible = result != null && result.toString().trim().isNotEmpty()
+            }
+
             imgBack.setOnClickListener {
                 showSearch()
-                hideSoftKeybord(this@MainActivity, binding.root)
+                hideSoftKeyboard(this@MainActivity, binding.root)
                 edtSearchMain.text.clear()
             }
 
@@ -103,7 +113,7 @@ class MainActivity : AppCompatActivity() {
                     val dataSearch = edtSearchMain.text.toString().trim()
                     userAdapter.filter.filter(dataSearch)
 
-                    hideSoftKeybord(this@MainActivity, binding.root)
+                    hideSoftKeyboard(this@MainActivity, binding.root)
 
                     return@setOnEditorActionListener true
                 }
@@ -120,7 +130,7 @@ class MainActivity : AppCompatActivity() {
             tvTitle.gone()
             imgBack.visible()
             edtSearchMain.visible()
-            imgClear.visible()
+//            imgClear.visible()
         }
     }
 

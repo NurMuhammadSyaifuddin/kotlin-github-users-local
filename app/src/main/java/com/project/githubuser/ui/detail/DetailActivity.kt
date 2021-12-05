@@ -4,16 +4,11 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import com.bumptech.glide.Glide
-import com.project.githubuser.R
 import com.project.githubuser.databinding.ActivityDetailBinding
 import com.project.githubuser.model.User
+import com.project.githubuser.utils.loadImage
 
 class DetailActivity : AppCompatActivity() {
-
-    companion object {
-        const val EXTRA_USER = "extra_user"
-    }
 
     private lateinit var binding: ActivityDetailBinding
 
@@ -67,12 +62,8 @@ class DetailActivity : AppCompatActivity() {
                     .postDelayed({
                         hideLoading()
 
-                        Glide.with(this)
-                            .load(id)
-                            .placeholder(R.drawable.ic_user)
-                            .into(binding.avatarUser)
-
                         binding.apply {
+                            avatarUser.loadImage(id)
                             tvUsername.text = user.username
                             tvName.text = user.name
                             tvCompany.text = user.company
@@ -88,4 +79,9 @@ class DetailActivity : AppCompatActivity() {
         }
 
     }
+
+    companion object {
+        const val EXTRA_USER = "extra_user"
+    }
+
 }
